@@ -126,7 +126,8 @@ class Bomb:
         self.rct = self.img.get_rect()
         self.rct.center = random.randint(0, WIDTH), random.randint(0, HEIGHT)
         self.vx, self.vy = +5, +5
-
+        
+        
     def update(self, screen: pg.Surface):
         """
         爆弾を速度ベクトルself.vx, self.vyに基づき移動させる
@@ -141,12 +142,26 @@ class Bomb:
         screen.blit(self.img, self.rct)
 
 
+class Score:
+    def __init__(self):
+        self.fonto = pg.font.SysFont("hgp創英角ポップ体", 30)
+        self.score = 0
+        self.img = self.fonto.render(f"score:{self.score}", 0, (0, 0, 255))
+        self.rct = self.img.get_rect()
+        self.rct.center = 100, HEIGHT-50
+    
+    def update(self, screen):
+        self.img = self.fonto.render(f"score:{self.score}", 0, (0, 0, 255))
+        screen.blit(self.img, self.rct)
+        
+
 def main():
     pg.display.set_caption("たたかえ！こうかとん")
     screen = pg.display.set_mode((WIDTH, HEIGHT))    
     bg_img = pg.image.load("fig/pg_bg.jpg")
     bird = Bird((300, 200))
     beam = None
+    score = Score()
     #bomb = Bomb((255, 0, 0), 10)
     bombs = [Bomb((255, 0, 0), 10) for _ in range(NUM_OF_BOMBS)]
     clock = pg.time.Clock()
@@ -177,6 +192,8 @@ def main():
                     bombs[i] = None
                     beam = None
                     bird.change_img(6, screen)
+                    score.score += 1
+                    
         bombs = [bomb for bomb in bombs if bomb is not None]
         
 
@@ -186,7 +203,9 @@ def main():
             beam.update(screen)
         for bomb in bombs:   
             bomb.update(screen)
+        score.update(screen)
         pg.display.update()
+
         tmr += 1
         clock.tick(50)
 
