@@ -161,6 +161,7 @@ def main():
     bg_img = pg.image.load("fig/pg_bg.jpg")
     bird = Bird((300, 200))
     beam = None
+    beams = []
     score = Score()
     #bomb = Bomb((255, 0, 0), 10)
     bombs = [Bomb((255, 0, 0), 10) for _ in range(NUM_OF_BOMBS)]
@@ -172,8 +173,11 @@ def main():
                 return
             if event.type == pg.KEYDOWN and event.key == pg.K_SPACE:
                 # スペースキー押下でBeamクラスのインスタンス生成
-                beam = Beam(bird)            
+                beam = Beam(bird)  
+                beams.append(Beam(bird))
+
         screen.blit(bg_img, [0, 0])
+
         
         for bomb in bombs:
             if bird.rct.colliderect(bomb.rct):
@@ -185,7 +189,7 @@ def main():
                 pg.display.update()
                 time.sleep(5)
                 return
-            
+        
         for i in range(len(bombs)):
             if beam is not None:
                 if bombs[i].rct.colliderect(beam.rct):
@@ -199,10 +203,12 @@ def main():
 
         key_lst = pg.key.get_pressed()
         bird.update(key_lst, screen)
-        if beam is not None:
-            beam.update(screen)
+        for beam in beams:
+            if beam is not None:
+                beam.update(screen)
         for bomb in bombs:   
             bomb.update(screen)
+        
         score.update(screen)
         pg.display.update()
 
